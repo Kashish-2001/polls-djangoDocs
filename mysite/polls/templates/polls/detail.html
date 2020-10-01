@@ -1,0 +1,30 @@
+{% extends 'polls/base.html' %}
+
+{% block content %}
+<h1>{{ question.question_text }}</h1>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+
+<form action="{% url 'polls:vote' question.id %}" method="post" >
+{% csrf_token %}
+{% for choice in question.choice_set.all %}
+
+<!-- Since you have a foreign key from Choice model to the Question model, 
+question.choice_set.all is the queryset of choices which point to your question instance as the foreign key.
+The default name for this inverse relationship is choice_set (because the related model is named Choice).
+But you can override this default name by specifying the related_name kwarg on the foreign key: -->
+
+    <h4>
+        <input id = 'choice{{ forloop.counter }}' type="radio" value="{{choice.id}}" name = 'choice'>
+        <label for="choice{{ forloop.counter }}">{{choice.choice_text}}</label><br>
+    </h4>
+    {% endfor %}
+<input class="btn btn-success" type="submit" value="Vote" >
+<br> <br>
+<a type="button" class="btn btn-dark btn-lg" href="{% url 'polls:results' question.id %}">Results</a>
+
+</form>
+
+<!-- action = "{% url 'polls:results' question.id %}" -->
+{% endblock %}
